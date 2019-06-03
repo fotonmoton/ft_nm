@@ -1,7 +1,9 @@
 *.o
 *.a
 *.so
-.vscode
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
 /bld
 /debug_bld
 /out

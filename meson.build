@@ -35,6 +35,7 @@ libft = subproject('libft')
 
 libft_dep = libft.get_variable('libft_dep')
 
+
 ft_nm = executable(
 	'ft_nm',
 	sources,
