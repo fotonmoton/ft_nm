@@ -44,15 +44,16 @@ int		main(int argc, char **argv)
 	}
 	Elf64_Shdr *section_array;
 	Elf64_Shdr *strings_table;
+	Elf64_Shdr *section_entity;
 	
 	section_array = (Elf64_Shdr *)(file + elf_header->e_shoff);
 	strings_table = section_array + elf_header->e_shstrndx;
 	char *string;
-	int i = 1;
+	int i = 0;
 	while (i < elf_header->e_shnum)
 	{
-		section_array = section_array + i;
-		string = (char *)(file + strings_table->sh_offset + section_array->sh_name);
+		section_entity = section_array + i;
+		string = (char *)(file + strings_table->sh_offset + section_entity->sh_name);
 		printf("entity name: %s\n", string);
 		i++;
 	}
