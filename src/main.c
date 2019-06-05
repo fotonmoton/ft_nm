@@ -42,21 +42,46 @@ int		main(int argc, char **argv)
 		ft_putstr("sorry, only 64bit elf binaries for now");
 		return (1);
 	}
-	Elf64_Shdr *section_array;
-	Elf64_Shdr *strings_table;
-	Elf64_Shdr *section_entity;
+	Elf64_Shdr	*section_table;
+	Elf64_Shdr	*section_names;
+	Elf64_Shdr	*section_entity;
+	Elf64_Sym	*symbol_table;
+	char		*symbol_names;
+	int			symbol_table_size;
+	int			symbol_table_entity_size;
 	
-	section_array = (Elf64_Shdr *)(file + elf_header->e_shoff);
-	strings_table = section_array + elf_header->e_shstrndx;
+	section_table = (Elf64_Shdr *)(file + elf_header->e_shoff);
+	section_names = section_table + elf_header->e_shstrndx;
 	char *string;
 	int i = 0;
 	while (i < elf_header->e_shnum)
 	{
-		section_entity = section_array + i;
-		string = (char *)(file + strings_table->sh_offset + section_entity->sh_name);
-		printf("entity name: %s\n", string);
+		section_entity = section_table + i;
+		string = file + section_names->sh_offset + section_entity->sh_name;
+		printf("%d entity name: %s type: %d\n", i, string, section_entity->sh_type);
+		if (section_entity->sh_type == SHT_SYMTAB)
+		{
+			printf("found symbol table! index: %d\n", i);
+			symbol_table = (Elf64_Sym *)(file + section_entity->sh_offset);
+			symbol_table_size = section_entity->sh_size;
+			symbol_table_entity_size = section_entity->sh_entsize;
+		}
+		if (section_entity->sh_type == SHT_STRTAB && i != elf_header->e_shstrndx)
+		{
+			printf("found symbol names! index: %d\n", i);
+			symbol_names = file + section_entity->sh_offset;
+		}
 		i++;
 	}
-	ft_putstr("symbol table\n");
+	int j = 0;
+	Elf64_Sym *symbol;
+	while (symbol_table_size > 0)
+	{
+		symbol = symbol_table + j;
+		string = symbol_names + symbol->st_name;
+		printf("%d: %s\n", j, string);
+		symbol_table_size -= symbol_table_entity_size;
+		j++; 
+	}
 	return(0);
 }
