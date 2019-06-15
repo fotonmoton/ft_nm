@@ -1,8 +1,29 @@
 #include "libft.h"
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <elf.h>
 #include <stdio.h>
+#include <mach-o/loader.h>
+#include <mach-o/nlist.h>
+
+
+static void	print_addr(void *addr)
+{
+	size_t	i;
+	size_t	bit_4;
+	size_t	count;
+
+	count = sizeof(addr) * 2;
+	i = 0;
+	while (i < count)
+	{
+		bit_4 = ((size_t)addr >> ((count - i - 1) * 4)) & 0xf;
+		if (bit_4 < 10)
+			ft_putnbr(bit_4);
+		else
+			ft_putchar('a' + bit_4 - 10);
+		i++;
+	}
+}
 
 int		main(int argc, char **argv)
 {
@@ -27,61 +48,69 @@ int		main(int argc, char **argv)
 	char *file;
 	file = malloc(stat_buff.st_size);
 	read(fd, file, stat_buff.st_size);
-	Elf64_Ehdr *elf_header;
 
-	elf_header = (Elf64_Ehdr *)file;
-	if (elf_header->e_ident[EI_MAG0] != ELFMAG0 || 
-		elf_header->e_ident[EI_MAG1] != ELFMAG1 ||
-		elf_header->e_ident[EI_MAG2] != ELFMAG2)
+	uint32_t magic = *(uint32_t *)file;
+
+	if (magic != MH_MAGIC && magic != MH_MAGIC_64)
 	{
-		ft_putstr("not a valid magic number for elf binary file\n");
+		ft_putstr("not a mach-o file\n");
 		return (1);
 	}
-	if (elf_header->e_ident[EI_CLASS] != ELFCLASS64)
-	{
-		ft_putstr("sorry, only 64bit elf binaries for now");
-		return (1);
-	}
-	Elf64_Shdr	*section_table;
-	Elf64_Shdr	*section_names;
-	Elf64_Shdr	*section_entity;
-	Elf64_Sym	*symbol_table;
-	char		*symbol_names;
-	int			symbol_table_size;
-	int			symbol_table_entity_size;
+
+	if (magic == MH_MAGIC)
+		ft_putstr("32 bit mach-o file\n");
 	
-	section_table = (Elf64_Shdr *)(file + elf_header->e_shoff);
-	section_names = section_table + elf_header->e_shstrndx;
-	char *string;
-	int i = 0;
-	while (i < elf_header->e_shnum)
+	if (magic == MH_MAGIC_64)
 	{
-		section_entity = section_table + i;
-		string = file + section_names->sh_offset + section_entity->sh_name;
-		printf("%d entity name: %s type: %d\n", i, string, section_entity->sh_type);
-		if (section_entity->sh_type == SHT_SYMTAB)
+		struct mach_header_64 *hdr = (struct mach_header_64 *)file;
+		// ft_putstr("64 bit mach-o file\n");
+		// ft_putstr("# of cmds: ");
+		// ft_putnbr(hdr->ncmds);
+		// ft_putstr("\n");
+		// ft_putstr("total cmds memory: ");
+		// ft_putnbr(hdr->sizeofcmds);
+		// ft_putstr("\n");
+		struct load_command *load_cmd;
+		struct symtab_command *symtab_cmd;
+		uint32_t load_cmd_offset = sizeof(struct mach_header_64);
+		uint32_t i = 0;
+		while (i < hdr->ncmds)
 		{
-			printf("found symbol table! index: %d\n", i);
-			symbol_table = (Elf64_Sym *)(file + section_entity->sh_offset);
-			symbol_table_size = section_entity->sh_size;
-			symbol_table_entity_size = section_entity->sh_entsize;
+			load_cmd = (struct load_command *)(file + load_cmd_offset);
+			if (load_cmd->cmd == LC_SYMTAB)
+			{
+				symtab_cmd = (struct symtab_command *)load_cmd;
+				// ft_putstr("found symbol table load command\n");
+				// ft_putstr("# of symbols: ");
+				// ft_putnbr(symtab_cmd->nsyms);
+				// ft_putstr("\n");
+
+				uint32_t j = 0;
+				struct nlist_64 *symbol_table = (struct nlist_64 *)
+					(file + symtab_cmd->symoff);
+				struct nlist_64 symbol;
+				char *str_table = file + symtab_cmd->stroff;
+				while(j < symtab_cmd->nsyms)
+				{
+					symbol = symbol_table[j];
+					if (symbol.n_value)
+						print_addr((void *)symbol.n_value);
+					else
+						ft_putstr("                ");
+					int type = symbol.n_type & N_TYPE;
+					if (type == N_UNDF)
+						ft_putstr(" U ");
+					if (type == N_ABS)
+						ft_putstr(" A ");
+					if (type == N_SECT)
+						ft_putstr(" T ");
+					ft_putstr(str_table + symbol.n_un.n_strx);
+					ft_putstr("\n");
+					j++;
+				}
+			}
+			load_cmd_offset += load_cmd->cmdsize;
+			i++;
 		}
-		if (section_entity->sh_type == SHT_STRTAB && i != elf_header->e_shstrndx)
-		{
-			printf("found symbol names! index: %d\n", i);
-			symbol_names = file + section_entity->sh_offset;
-		}
-		i++;
 	}
-	int j = 0;
-	Elf64_Sym *symbol;
-	while (symbol_table_size > 0)
-	{
-		symbol = symbol_table + j;
-		string = symbol_names + symbol->st_name;
-		printf("%d: %s\n", j, string);
-		symbol_table_size -= symbol_table_entity_size;
-		j++; 
-	}
-	return(0);
 }

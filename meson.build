@@ -11,7 +11,6 @@ add_global_arguments(
 	'-Wall',
 	'-Wextra',
 	'-Werror',
-	'-Wcast-align',
 	'-Wwrite-strings',
 	'-Wunreachable-code',
 	'-Winit-self',
