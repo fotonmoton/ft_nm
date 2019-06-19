@@ -90,20 +90,37 @@ int		main(int argc, char **argv)
 					(file + symtab_cmd->symoff);
 				struct nlist_64 symbol;
 				char *str_table = file + symtab_cmd->stroff;
+				printf("# symbols: %d\n", symtab_cmd->nsyms);
 				while(j < symtab_cmd->nsyms)
 				{
 					symbol = symbol_table[j];
+					int type = symbol.n_type & N_TYPE;
+					int external = symbol.n_type & N_EXT;
+					int offset = external ? 0 : 32;
+
+					if (
+						type != N_UNDF && 
+						type != N_ABS && 
+						type != N_SECT && 
+						type != N_PBUD && 
+						type != N_INDR)
+					{
+						j++;
+						continue;
+					}
+
 					if (symbol.n_value)
 						print_addr((void *)symbol.n_value);
 					else
 						ft_putstr("                ");
-					int type = symbol.n_type & N_TYPE;
+					ft_putchar(' ');
 					if (type == N_UNDF)
-						ft_putstr(" U ");
+						ft_putchar('U' + offset);
 					if (type == N_ABS)
-						ft_putstr(" A ");
+						ft_putchar('A' + offset);
 					if (type == N_SECT)
-						ft_putstr(" T ");
+						ft_putchar('T' + offset);
+					ft_putchar(' ');
 					ft_putstr(str_table + symbol.n_un.n_strx);
 					ft_putstr("\n");
 					j++;

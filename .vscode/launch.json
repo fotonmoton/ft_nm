@@ -19,6 +19,22 @@
             "osx": {
                 "MIMode": "lldb"
             }
+        },
+        {
+            "name": "orig nm read",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/debug_bld/ft_nm",
+            "args": ["/usr/bin/nm"],
+            "preLaunchTask": "build",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "osx": {
+                "MIMode": "lldb"
+            }
         }
     ]
 }

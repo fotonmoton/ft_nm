@@ -3,6 +3,7 @@ project(
 	'c',
 	default_options: [
 		'buildtype=plain',
+		'strip=true',
 	],
 )
 
