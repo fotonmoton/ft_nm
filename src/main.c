@@ -97,13 +97,9 @@ int		main(int argc, char **argv)
 					int type = symbol.n_type & N_TYPE;
 					int external = symbol.n_type & N_EXT;
 					int offset = external ? 0 : 32;
+					char *name = str_table + symbol.n_un.n_strx;
 
-					if (
-						type != N_UNDF && 
-						type != N_ABS && 
-						type != N_SECT && 
-						type != N_PBUD && 
-						type != N_INDR)
+					if ((symbol.n_type & N_STAB) != 0)
 					{
 						j++;
 						continue;
@@ -121,7 +117,7 @@ int		main(int argc, char **argv)
 					if (type == N_SECT)
 						ft_putchar('T' + offset);
 					ft_putchar(' ');
-					ft_putstr(str_table + symbol.n_un.n_strx);
+					ft_putstr(name);
 					ft_putstr("\n");
 					j++;
 				}
