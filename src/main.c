@@ -90,16 +90,16 @@ int		main(int argc, char **argv)
 					(file + symtab_cmd->symoff);
 				struct nlist_64 symbol;
 				char *str_table = file + symtab_cmd->stroff;
-				printf("# symbols: %d\n", symtab_cmd->nsyms);
 				while(j < symtab_cmd->nsyms)
 				{
 					symbol = symbol_table[j];
 					int type = symbol.n_type & N_TYPE;
 					int external = symbol.n_type & N_EXT;
+					int debug = (symbol.n_type & N_STAB) != 0;
 					int offset = external ? 0 : 32;
 					char *name = str_table + symbol.n_un.n_strx;
 
-					if ((symbol.n_type & N_STAB) != 0)
+					if (debug)
 					{
 						j++;
 						continue;
@@ -115,6 +115,7 @@ int		main(int argc, char **argv)
 					if (type == N_ABS)
 						ft_putchar('A' + offset);
 					if (type == N_SECT)
+						// lookup in which section symbol is located
 						ft_putchar('T' + offset);
 					ft_putchar(' ');
 					ft_putstr(name);
