@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "ft_nm.h"
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <stdio.h>
@@ -70,96 +71,125 @@ void		close_file(int fd, char *file)
 	free(file);
 }
 
-void		handle_64(char *file)
+t_symtab_command *find_symbol_table_command(t_load_command *lc, uint32_t count)
 {
-	struct mach_header_64		*hdr;
-	struct load_command			*load_cmd;
-	struct symtab_command		*symtab_cmd;
-	struct segment_command_64	*segment_cmd;
-	
-	hdr = (struct mach_header_64 *)file;
-	ft_putstr("64 bit mach-o file\n");
-	ft_putstr("# of cmds: ");
-	ft_putnbr(hdr->ncmds);
-	ft_putstr("\n");
-	ft_putstr("total cmds memory: ");
-	ft_putnbr(hdr->sizeofcmds);
-	ft_putstr("\n");
-	
-	uint32_t load_cmd_offset = sizeof(struct mach_header_64);
-	uint32_t i = 0;
-	while (i < hdr->ncmds)
+	uint32_t			i;
+	t_symtab_command	*sym_tab;
+
+	sym_tab = NULL;
+	i = 0;
+	while(i < count)
 	{
-		load_cmd = (struct load_command *)(file + load_cmd_offset);
-		if (load_cmd->cmd == LC_SEGMENT_64)
+		if (lc->cmd == LC_SYMTAB)
 		{
-			segment_cmd = (struct segment_command_64 *)load_cmd;
-			ft_putnbr(i);
-			ft_putchar(' ');
-			ft_putnbr(segment_cmd->nsects);
-			ft_putchar(' ');
-			ft_putstr(segment_cmd->segname);
-			ft_putchar('\n');
-			load_cmd_offset += load_cmd->cmdsize;
-			i++;
-			continue;
+			sym_tab = (t_symtab_command *)lc;
+			break;
 		}
-		if (load_cmd->cmd == LC_SYMTAB)
-		{
-			symtab_cmd = (struct symtab_command *)load_cmd;
-			ft_putstr("found symbol table load command\n");
-			ft_putstr("# of symbols: ");
-			ft_putnbr(symtab_cmd->nsyms);
-			ft_putstr("\n");
-
-			uint32_t j = 0;
-			struct nlist_64 *symbol_table = (struct nlist_64 *)
-				(file + symtab_cmd->symoff);
-			struct nlist_64 symbol;
-			char *str_table = file + symtab_cmd->stroff;
-			while(j < symtab_cmd->nsyms)
-			{
-				symbol = symbol_table[j];
-				int type = symbol.n_type & N_TYPE;
-				int external = symbol.n_type & N_EXT;
-				int debug = (symbol.n_type & N_STAB) != 0;
-				int offset = external ? 0 : 32;
-				char *name = str_table + symbol.n_un.n_strx;
-
-				if (debug)
-				{
-					j++;
-					continue;
-				}
-
-				// some shit herustic should be used 
-				// to determine to print address or not
-				if (symbol.n_value)
-					print_addr((void *)symbol.n_value);
-				else
-					ft_putstr("                ");
-				ft_putchar(' ');
-				if (type == N_UNDF)
-					ft_putchar('U' + offset);
-				if (type == N_ABS)
-					ft_putchar('A' + offset);
-				if (type == N_SECT)
-				{
-					// lookup in which section symbol is located
-
-					ft_putchar('T' + offset);
-					ft_putchar(' ');
-					ft_putnbr(symbol.n_sect);
-				}
-				ft_putchar(' ');
-				ft_putstr(name);
-				ft_putstr("\n");
-				j++;
-			}
-		}
-		load_cmd_offset += load_cmd->cmdsize;
+		lc = (t_load_command *)((uintptr_t)lc + lc->cmdsize);
 		i++;
 	}
+	return sym_tab;
+}
+
+t_section_64	*find_section(t_load_command *lc, uint32_t cmd_num, uint32_t section)
+{
+	uint32_t				i;
+	uint32_t				acc;
+	t_section_64			*sections;
+	t_segment_command_64	*segment;
+
+	acc = 0;
+	i = 0;
+	while(i < cmd_num)
+	{
+		if (lc->cmd == LC_SEGMENT_64)
+		{
+			segment = (t_segment_command_64 *)lc;
+			if (segment->nsects + acc >= section)
+			{
+				sections = (t_section_64 *)((uintptr_t)segment + sizeof(t_segment_command_64));
+				return (sections + section - acc - 1);
+			}
+			acc += segment->nsects;
+		}
+		lc = (t_load_command *)((uintptr_t)lc + lc->cmdsize);
+		i++;
+	}
+	return NULL;
+}
+
+void		print_symbol_table(t_symtab_command *symtab_cmd, char *file, t_load_command *load_commands, uint32_t cmd_num)
+{
+	uint32_t		j;
+	t_nlist_64		*symbol_table;
+	t_nlist_64		symbol;
+	t_section_64	*section;
+	char			*string_table;
+
+	string_table = file + symtab_cmd->stroff;
+	symbol_table = (t_nlist_64 *)(file + symtab_cmd->symoff);
+	j = 0;
+	while(j < symtab_cmd->nsyms)
+	{
+		symbol = symbol_table[j];
+		int type = symbol.n_type & N_TYPE;
+		int external = symbol.n_type & N_EXT;
+		int debug = (symbol.n_type & N_STAB) != 0;
+		int offset = external ? 0 : 32;
+		char *name = string_table + symbol.n_un.n_strx;
+
+		if (debug)
+		{
+			j++;
+			continue;
+		}
+
+		// some shit herustic should be used
+		// to determine to print address or not
+		if (symbol.n_value)
+			print_addr((void *)symbol.n_value);
+		else
+			ft_putstr("                ");
+		ft_putchar(' ');
+		if (type == N_UNDF)
+			ft_putchar('U' + offset);
+		if (type == N_ABS)
+			ft_putchar('A' + offset);
+		if (type == N_SECT)
+		{
+			// lookup in which section symbol is located
+			section = find_section(load_commands, cmd_num, symbol.n_sect);
+			if(ft_strcmp(SECT_TEXT, section->sectname) == 0)
+				ft_putchar('T' + offset);
+			else if(ft_strcmp(SECT_DATA, section->sectname) == 0)
+				ft_putchar('D' + offset);
+			else if(ft_strcmp(SECT_BSS, section->sectname) == 0)
+				ft_putchar('B' + offset);
+			else
+				ft_putchar('S' + offset);
+			ft_putchar(' ');
+			ft_putnbr(symbol.n_sect);
+		}
+		ft_putchar(' ');
+		ft_putstr(name);
+		ft_putstr("\n");
+		j++;
+	}
+}
+
+void		handle_64(char *file)
+{
+	t_mach_header_64		*hdr;
+	t_load_command			*load_commands;
+	t_symtab_command		*symtab_cmd;
+	// t_section_64			*sections;
+	// t_segment_command_64	*segment_cmd;
+
+	hdr = (t_mach_header_64 *)file;
+	load_commands = (t_load_command *)(file + sizeof(t_mach_header_64));
+	// sections = (t_section_64 *)(file + hdr->sizeofcmds + sizeof(t_mach_header_64));
+	symtab_cmd = find_symbol_table_command(load_commands, hdr->ncmds);
+	print_symbol_table(symtab_cmd, file, load_commands, hdr->ncmds);
 }
 
 void		handle_32(char *file)

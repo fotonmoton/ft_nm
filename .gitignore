@@ -4,6 +4,7 @@
 .vscode/*
 !.vscode/launch.json
 !.vscode/tasks.json
+/build
 /bld
 /debug_bld
 /out

@@ -13,4 +13,14 @@
 #ifndef FT_NM_H
 # define FT_NM_H
 
+# include <mach-o/loader.h>
+# include <mach-o/nlist.h>
+
+typedef struct load_command			t_load_command;
+typedef struct mach_header_64		t_mach_header_64;
+typedef struct symtab_command		t_symtab_command;
+typedef struct segment_command_64	t_segment_command_64;
+typedef struct nlist_64				t_nlist_64;
+typedef struct section_64			t_section_64;
+
 #endif
