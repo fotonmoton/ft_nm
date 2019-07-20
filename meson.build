@@ -28,7 +28,11 @@ inc = include_directories('inc')
 install_headers('inc/ft_nm.h')
 
 sources = [
-  'src/main.c'
+  'src/main.c',
+  'src/nm_file.c',
+  'src/macho64.c',
+  'src/print_address.c',
+  'src/find_symbol_table_command.c',
 ]
 
 libft = subproject('libft')
