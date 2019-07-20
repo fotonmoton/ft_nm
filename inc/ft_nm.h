@@ -6,7 +6,7 @@
 /*   By: gtertysh <gtertysh@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 22:37:16 by foton             #+#    #+#             */
-/*   Updated: 2019/07/20 15:38:47 by gtertysh         ###   ########.fr       */
+/*   Updated: 2019/07/20 16:17:47 by gtertysh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ typedef struct						s_nm_file
 	void							*file;
 	uint32_t						size;
 	int								fd;
+	const char						*filename;
 }									t_nm_file;
 
 typedef struct						s_nm_mach_64

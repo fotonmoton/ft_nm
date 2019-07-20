@@ -43,6 +43,7 @@ void				print_symbol_table(t_nm_mach_64 *mach64)
 	t_section_64	*section;
 
 	j = 0;
+
 	while(j < mach64->symbol_table_command->nsyms)
 	{
 		symbol = mach64->symbol_table[j];
@@ -101,5 +102,8 @@ void				macho64(t_nm_file *file)
 		(mach64.symbol_table_command->symoff + file->file);
 	mach64.string_table = (char *)
 		(mach64.symbol_table_command->stroff + file->file);
+	ft_putstr("\n");
+	ft_putstr(file->filename);
+		ft_putstr(":\n");
 	print_symbol_table(&mach64);
 }

@@ -12,6 +12,7 @@ void	init_file(t_nm_file *file)
 {
 	file->fd = -1;
 	file->file = NULL;
+	file->filename = NULL;
 	file->size = 0;
 }
 
@@ -19,16 +20,17 @@ void	open_file(const char *filename, t_nm_file *file)
 {
 	struct stat stat_buff;
 
+	file->filename = filename;
 	file->fd = open(filename, O_RDONLY);
 	if (file->fd == -1)
 	{
-		ft_putstr("can't open file\n");
+		perror(filename);
 		exit(1);
 	}
 	stat(filename, &stat_buff);
 	if (!S_ISREG(stat_buff.st_mode))
 	{
-		ft_putstr("not a regular file\n");
+		ft_putstr_fd("not a regular file\n", STDERR_FILENO);
 		close(file->fd);
 		exit(1);
 	}
