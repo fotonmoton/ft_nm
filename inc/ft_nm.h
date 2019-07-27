@@ -6,7 +6,7 @@
 /*   By: gtertysh <gtertysh@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 22:37:16 by foton             #+#    #+#             */
-/*   Updated: 2019/07/27 19:50:54 by gtertysh         ###   ########.fr       */
+/*   Updated: 2019/07/27 20:07:37 by gtertysh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include <mach-o/fat.h>
+#include <ar.h>
 #include <stddef.h>
 
 typedef struct symtab_command		t_symtab_command;
@@ -74,6 +75,11 @@ void								close_file
 );
 
 void								fat
+(
+	t_nm_file *file
+);
+
+void								ar
 (
 	t_nm_file *file
 );
