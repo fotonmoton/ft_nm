@@ -51,6 +51,22 @@
             "osx": {
                 "MIMode": "lldb"
             }
+		},
+		{
+            "name": "fat",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/debug_bld/ft_nm",
+            "args": ["/usr/bin/javah"],
+            "preLaunchTask": "build",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "osx": {
+                "MIMode": "lldb"
+            }
         }
     ]
 }

@@ -6,7 +6,7 @@
 /*   By: gtertysh <gtertysh@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/13 14:52:27 by gtertysh          #+#    #+#             */
-/*   Updated: 2019/07/27 17:57:52 by gtertysh         ###   ########.fr       */
+/*   Updated: 2019/07/27 19:35:42 by gtertysh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ void		hanldle_file(const char *filename)
 		macho64(&file);
 	else if (magic == MH_MAGIC)
 		macho32(&file);
+	else if (magic == FAT_CIGAM)
+		fat(&file);
 	else
 		ft_putstr("invalid magic number.");
 	close_file(&file);

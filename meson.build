@@ -32,6 +32,7 @@ sources = [
   'src/nm_file.c',
   'src/macho64.c',
   'src/macho32.c',
+  'src/fat.c',
   'src/print_address.c',
   'src/find_symbol_table_command.c',
 ]

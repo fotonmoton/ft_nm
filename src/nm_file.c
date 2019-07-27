@@ -12,7 +12,6 @@ void	init_file(t_nm_file *file)
 {
 	file->fd = -1;
 	file->file = NULL;
-	file->filename = NULL;
 	file->size = 0;
 }
 
@@ -20,7 +19,6 @@ void	open_file(const char *filename, t_nm_file *file)
 {
 	struct stat stat_buff;
 
-	file->filename = filename;
 	file->fd = open(filename, O_RDONLY);
 	if (file->fd == -1)
 	{
