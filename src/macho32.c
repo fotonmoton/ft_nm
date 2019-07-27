@@ -2,30 +2,30 @@
 #include "libft.h"
 #include <stddef.h>
 
-static t_section_64			*find_section
+static t_section_32			*find_section
 (
-	t_nm_mach_64 *mach64,
+	t_nm_mach_32 *mach32,
 	uint32_t index
 )
 {
 	uint32_t				i;
 	uint32_t				acc;
 	t_load_command			*lc;
-	t_section_64			*sections;
-	t_segment_command_64	*segment;
+	t_section_32			*sections;
+	t_segment_command_32	*segment;
 
-	lc = mach64->commands;
+	lc = mach32->commands;
 	acc = 0;
 	i = 0;
-	while(i < mach64->header->ncmds)
+	while(i < mach32->header->ncmds)
 	{
-		if (lc->cmd == LC_SEGMENT_64)
+		if (lc->cmd == LC_SEGMENT)
 		{
-			segment = (t_segment_command_64 *)lc;
+			segment = (t_segment_command_32 *)lc;
 			if (segment->nsects + acc >= index)
 			{
-				sections = (t_section_64 *)((uintptr_t)segment +
-					sizeof(t_segment_command_64));
+				sections = (t_section_32 *)((uintptr_t)segment +
+					sizeof(t_segment_command_32));
 				return (sections + index - acc - 1);
 			}
 			acc += segment->nsects;
@@ -36,22 +36,22 @@ static t_section_64			*find_section
 	return NULL;
 }
 
-static void				print_symbol_table(t_nm_mach_64 *mach64)
+static void				print_symbol_table(t_nm_mach_32 *mach32)
 {
 	uint32_t		j;
-	t_nlist_64		symbol;
-	t_section_64	*section;
+	t_nlist_32		symbol;
+	t_section_32	*section;
 
 	j = 0;
 
-	while(j < mach64->symbol_table_command->nsyms)
+	while(j < mach32->symbol_table_command->nsyms)
 	{
-		symbol = mach64->symbol_table[j];
+		symbol = mach32->symbol_table[j];
 		int type = symbol.n_type & N_TYPE;
 		int external = symbol.n_type & N_EXT;
 		int debug = (symbol.n_type & N_STAB) != 0;
 		int offset = external ? 0 : 32;
-		char *name = mach64->string_table + symbol.n_un.n_strx;
+		char *name = mach32->string_table + symbol.n_un.n_strx;
 
 		if (debug)
 		{
@@ -62,9 +62,9 @@ static void				print_symbol_table(t_nm_mach_64 *mach64)
 		// some shit herustic should be used
 		// to determine to print address or not
 		if (symbol.n_value)
-			print_addr(symbol.n_value);
+			print_addr_32(symbol.n_value);
 		else
-			ft_putstr("                ");
+			ft_putstr("        ");
 		ft_putchar(' ');
 		if (type == N_UNDF)
 			ft_putchar('U' + offset);
@@ -72,7 +72,7 @@ static void				print_symbol_table(t_nm_mach_64 *mach64)
 			ft_putchar('A' + offset);
 		if (type == N_SECT)
 		{
-			section = find_section(mach64, symbol.n_sect);
+			section = find_section(mach32, symbol.n_sect);
 			if(ft_strcmp(SECT_TEXT, section->sectname) == 0)
 				ft_putchar('T' + offset);
 			else if(ft_strcmp(SECT_DATA, section->sectname) == 0)
@@ -89,17 +89,17 @@ static void				print_symbol_table(t_nm_mach_64 *mach64)
 	}
 }
 
-void				macho64(t_nm_file *file)
+void				macho32(t_nm_file *file)
 {
-	t_nm_mach_64	mach64;
+	t_nm_mach_32	mach32;
 
-	mach64.header = (t_mach_header_64 *)file->file;
-	mach64.commands = (t_load_command *)(file->file + sizeof(t_mach_header_64));
-	mach64.symbol_table_command = find_symbol_table_command(mach64.commands,
-		mach64.header->ncmds);
-	mach64.symbol_table = (t_nlist_64 *)
-		(mach64.symbol_table_command->symoff + file->file);
-	mach64.string_table = (char *)
-		(mach64.symbol_table_command->stroff + file->file);
-	print_symbol_table(&mach64);
+	mach32.header = (t_mach_header_32 *)file->file;
+	mach32.commands = (t_load_command *)(file->file + sizeof(t_mach_header_32));
+	mach32.symbol_table_command = find_symbol_table_command(mach32.commands,
+		mach32.header->ncmds);
+	mach32.symbol_table = (t_nlist_32 *)
+		(mach32.symbol_table_command->symoff + file->file);
+	mach32.string_table = (char *)
+		(mach32.symbol_table_command->stroff + file->file);
+	print_symbol_table(&mach32);
 }

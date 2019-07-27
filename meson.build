@@ -31,6 +31,7 @@ sources = [
   'src/main.c',
   'src/nm_file.c',
   'src/macho64.c',
+  'src/macho32.c',
   'src/print_address.c',
   'src/find_symbol_table_command.c',
 ]

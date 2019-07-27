@@ -6,7 +6,7 @@
 /*   By: gtertysh <gtertysh@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/13 14:52:27 by gtertysh          #+#    #+#             */
-/*   Updated: 2019/07/20 15:21:14 by gtertysh         ###   ########.fr       */
+/*   Updated: 2019/07/27 17:57:52 by gtertysh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,18 @@ void		hanldle_file(const char *filename)
 	magic = *(uint32_t *)file.file;
 	if (magic == MH_MAGIC_64)
 		macho64(&file);
-	// else if (magic == MH_MAGIC)
-	// 	handle_32(file);
-	// else if (magic == MH_CIGAM || magic == MH_CIGAM_64)
-	// 	ft_putstr("do not support big endian binaries.");
+	else if (magic == MH_MAGIC)
+		macho32(&file);
 	else
 		ft_putstr("invalid magic number.");
 	close_file(&file);
+}
+
+void		print_name(const char *name)
+{
+	ft_putstr("\n");
+	ft_putstr(name);
+	ft_putstr(":\n");
 }
 
 int			main(int argc, char **argv)
@@ -39,11 +44,18 @@ int			main(int argc, char **argv)
 
 	if (argc == 1)
 		hanldle_file("a.out");
+	else if (argc == 2)
+		hanldle_file(argv[1]);
 	else
 	{
 		i = 1;
 		while (i < argc)
-			 hanldle_file(argv[i++]);
+		{
+			print_name(argv[i]);
+			hanldle_file(argv[i]);
+			i++;
+		}
+
 	}
 	return (0);
 }

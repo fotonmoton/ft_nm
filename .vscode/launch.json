@@ -35,6 +35,22 @@
             "osx": {
                 "MIMode": "lldb"
             }
+		},
+		{
+            "name": "32bin",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/debug_bld/ft_nm",
+            "args": ["t/test_binaries/test32"],
+            "preLaunchTask": "build",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "osx": {
+                "MIMode": "lldb"
+            }
         }
     ]
 }
