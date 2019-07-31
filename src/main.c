@@ -6,7 +6,7 @@
 /*   By: gtertysh <gtertysh@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/13 14:52:27 by gtertysh          #+#    #+#             */
-/*   Updated: 2019/07/27 19:35:42 by gtertysh         ###   ########.fr       */
+/*   Updated: 2019/07/31 21:37:00 by gtertysh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void		hanldle_file(const char *filename)
 	t_nm_file	file;
 	uint32_t	magic;
 
+	// create dispatch table for this bullshit
 	init_file(&file);
 	open_file(filename, &file);
 	magic = *(uint32_t *)file.file;
@@ -28,6 +29,8 @@ void		hanldle_file(const char *filename)
 		macho32(&file);
 	else if (magic == FAT_CIGAM)
 		fat(&file);
+	else if (ft_strncmp(file.file, ARMAG, SARMAG) == 0)
+		ar(&file);
 	else
 		ft_putstr("invalid magic number.");
 	close_file(&file);
