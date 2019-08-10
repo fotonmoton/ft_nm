@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "self read",
+            "name": "nm self read",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/debug_bld/ft_nm",
@@ -21,7 +21,7 @@
             }
         },
         {
-            "name": "orig nm read",
+            "name": "nm orig nm read",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/debug_bld/ft_nm",
@@ -37,7 +37,7 @@
             }
 		},
 		{
-            "name": "32bin",
+            "name": "nm 32bin",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/debug_bld/ft_nm",
@@ -53,7 +53,7 @@
             }
 		},
 		{
-            "name": "fat",
+            "name": "nm fat",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/debug_bld/ft_nm",
@@ -69,7 +69,7 @@
             }
 		},
 		{
-            "name": "ar",
+            "name": "nm ar",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/debug_bld/ft_nm",
@@ -83,6 +83,22 @@
             "osx": {
                 "MIMode": "lldb"
             }
-        }
+        },
+        {
+            "name": "otool orig nm read",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/debug_bld/ft_otool",
+            "args": ["/usr/bin/nm"],
+            "preLaunchTask": "build",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "osx": {
+                "MIMode": "lldb"
+            }
+		},
     ]
 }

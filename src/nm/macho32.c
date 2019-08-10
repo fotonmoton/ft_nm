@@ -89,7 +89,7 @@ static void				print_symbol_table(t_nm_mach_32 *mach32)
 	}
 }
 
-void				macho32(t_nm_file *file)
+void				macho32(t_file *file)
 {
 	t_nm_mach_32	mach32;
 

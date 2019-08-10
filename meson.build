@@ -39,6 +39,7 @@ nm_sources = [
 ]
 
 otool_sources = [
+	'src/nm/nm_file.c',
 	'src/otool/main.c'
 ]
 
@@ -58,6 +59,6 @@ ft_nm = executable(
 	include_directories: inc,
 	dependencies: libft_dep,
 	install: true,
-)
 
+)
 #subdir('t')

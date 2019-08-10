@@ -6,7 +6,7 @@
 /*   By: gtertysh <gtertysh@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/13 14:52:27 by gtertysh          #+#    #+#             */
-/*   Updated: 2019/07/31 21:37:00 by gtertysh         ###   ########.fr       */
+/*   Updated: 2019/08/10 16:05:21 by gtertysh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 void		hanldle_file(const char *filename)
 {
-	t_nm_file	file;
+	t_file	file;
 	uint32_t	magic;
 
 	// create dispatch table for this bullshit

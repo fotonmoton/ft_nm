@@ -8,14 +8,14 @@
 #include <sys/mman.h>
 #include <stdio.h>
 
-void	init_file(t_nm_file *file)
+void	init_file(t_file *file)
 {
 	file->fd = -1;
 	file->file = NULL;
 	file->size = 0;
 }
 
-void	open_file(const char *filename, t_nm_file *file)
+void	open_file(const char *filename, t_file *file)
 {
 	struct stat stat_buff;
 
@@ -42,7 +42,7 @@ void	open_file(const char *filename, t_nm_file *file)
 	}
 }
 
-void	close_file(t_nm_file *file)
+void	close_file(t_file *file)
 {
 	close(file->fd);
 	munmap(file->file, file->size);

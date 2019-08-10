@@ -3,12 +3,12 @@
 #include <ar.h>
 
 
-void	ar(t_nm_file *file)
+void	ar(t_file *file)
 {
 	struct ar_hdr	*runner;
 	char			*long_name;
 	size_t			offset;
-	t_nm_file		obj;
+	t_file		obj;
 
 
 	runner = file->file + SARMAG;

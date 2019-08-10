@@ -89,7 +89,7 @@ static void				print_symbol_table(t_nm_mach_64 *mach64)
 	}
 }
 
-void				macho64(t_nm_file *file)
+void				macho64(t_file *file)
 {
 	t_nm_mach_64	mach64;
 

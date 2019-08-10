@@ -2,11 +2,11 @@
 #include "libft.h"
 #include <stdio.h>
 
-void	fat(t_nm_file *file)
+void	fat(t_file *file)
 {
 	struct fat_arch		*arch_runner;
 	struct fat_header	*header;
-	t_nm_file			arch_file;
+	t_file			arch_file;
 	uint32_t			i;
 
 	header = (struct fat_header *)file->file;
