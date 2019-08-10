@@ -25,9 +25,9 @@ add_global_arguments(
 
 inc = include_directories('inc')
 
-install_headers('inc/ft_nm.h')
+# install_headers('inc/ft_nm.h')
 
-sources = [
+nm_sources = [
   'src/nm/main.c',
   'src/nm/nm_file.c',
   'src/nm/macho64.c',
@@ -38,14 +38,23 @@ sources = [
   'src/nm/find_symbol_table_command.c',
 ]
 
-libft = subproject('libft')
+otool_sources = [
+	'src/otool/main.c'
+]
 
-libft_dep = libft.get_variable('libft_dep')
-
+libft_dep = subproject('libft').get_variable('libft_dep')
 
 ft_nm = executable(
 	'ft_nm',
-	sources,
+	nm_sources,
+	include_directories: inc,
+	dependencies: libft_dep,
+	install: true,
+)
+
+ft_nm = executable(
+	'ft_otool',
+	otool_sources,
 	include_directories: inc,
 	dependencies: libft_dep,
 	install: true,
