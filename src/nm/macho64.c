@@ -62,7 +62,7 @@ static void				print_symbol_table(t_nm_mach_64 *mach64)
 		// some shit herustic should be used
 		// to determine to print address or not
 		if (symbol.n_value)
-			print_addr(symbol.n_value);
+			print_addr(symbol.n_value, 16);
 		else
 			ft_putstr("                ");
 		ft_putchar(' ');

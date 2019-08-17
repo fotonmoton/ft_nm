@@ -6,7 +6,7 @@
 /*   By: gtertysh <gtertysh@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 22:37:16 by foton             #+#    #+#             */
-/*   Updated: 2019/08/10 17:18:31 by gtertysh         ###   ########.fr       */
+/*   Updated: 2019/08/17 14:26:16 by gtertysh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,12 +82,8 @@ t_symtab_command					*find_symbol_table_command
 
 void								print_addr
 (
-	size_t addr
-);
-
-void								print_addr_32
-(
-	size_t addr
+	size_t addr,
+	size_t count
 );
 
 #endif

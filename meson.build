@@ -40,6 +40,7 @@ nm_sources = [
 
 otool_sources = [
 	'src/nm/nm_file.c',
+	'src/nm/print_address.c',
 	'src/otool/main.c'
 ]
 
